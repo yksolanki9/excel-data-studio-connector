@@ -1,0 +1,18 @@
+{
+  "timeZone": "Asia/Kolkata",
+  "dependencies": {},
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "dataStudio": {
+    "name": "Excel Sheets - Google Data studio integration",
+    "logoUrl": "https://raw.githubusercontent.com/npm/logos/master/npm%20square/n-64.png",
+    "company": "yash-solanki",
+    "companyUrl": "https://developers.google.com/datastudio/",
+    "addonUrl": "https://github.com/googledatastudio/community-connectors/tree/master/npm-downloads#readme",
+    "supportUrl": "https://github.com/googledatastudio/community-connectors/issues",
+    "description": "Get npm package download counts.",
+    "sources": [
+      "github"
+    ]
+  }
+}
