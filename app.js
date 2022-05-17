@@ -64,20 +64,29 @@ app.get('/auth', async (req, res) => {
   }
 })
 
-app.get('/files', (req, res) => {
-  res.send(['test1', 'test2', 'test3'])
+app.get('/files', async (req, res) => {
+  try {
+    const email = req.query.email;
+    const userFiles = await File.findOne({email});
+    if (userFiles) {
+      return res.status(200).send(userFiles.files)
+    }
+    return res.status(400).send('File not found');
+  } catch(err) {
+    res.status(500).json({err: err.message});
+  }
 })
 
-app.get('/:clientId', (req, res) => {
-  const clientId = '12345' || req.params.clientId;
-  const accessToken = '12345' || req.query.access_token;
-  if(!clientId || !accessToken) {
-    res.send({})
+app.get('/file', (req, res) => {
+  try {
+    const fileName = req.query.name;
+    const filePath = `${__dirname}/files/${fileName}`;
+    const workbook = XLSX.readFile(filePath, {cellDates:true});
+    const data = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+    res.status(200).send(JSON.stringify(data));
+  } catch(err) {
+    res.status(500).json({err: err.message});
   }
-  const filePath = `${__dirname}/files/${clientId}-${accessToken}.xlsx`;
-  const workbook = XLSX.readFile(filePath, {cellDates:true});
-  const data = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-  res.send(JSON.stringify(data));
 });
 
 app.listen(3000, () => console.log('Server running on port 3000'));
