@@ -1,34 +1,91 @@
 var cc = DataStudioApp.createCommunityConnector();
 
+// function getConfig() {
+//   var config = cc.getConfig();
+
+//   const userFiles = JSON.parse(getFiles());
+
+//   config
+//     .newInfo()
+//     .setId('instructions')
+//     .setText(
+//       'Enter npm package names to fetch their download count. An invalid or blank entry will revert to the default value.'
+//     );
+
+//   config
+//     .newTextInput()
+//     .setId('client_id')
+//     .setName(
+//       'Enter CLIENT_ID'
+//     )
+//     .setPlaceholder('12345')
+//     .setAllowOverride(true);
+
+//   config
+//     .newTextInput()
+//     .setId('access_token')
+//     .setName(
+//       'Enter ACCESS_TOKEN'
+//     )
+//     .setPlaceholder('12345')
+//     .setAllowOverride(true);
+
+//   const data = config
+//     .newSelectSingle()
+//     .setId('fileName')
+//     .setName(
+//       'Select a File to view'
+//     )
+//     .setHelpText('Select a file name')
+//     .setAllowOverride(true);
+
+//   userFiles.reduce((data, file) => data.addOption(config.newOptionBuilder().setLabel(file).setValue(file)), data);
+
+//   return config.build();
+// }
+
 function getConfig() {
-  var config = cc.getConfig();
+  const userFiles = JSON.parse(getFiles()); 
 
-  config
-    .newInfo()
-    .setId('instructions')
-    .setText(
-      'Enter npm package names to fetch their download count. An invalid or blank entry will revert to the default value.'
-    );
+  const configOptions = userFiles.map((file) => ({
+    label: file,
+    value: file
+  }));
 
-  config
-    .newTextInput()
-    .setId('client_id')
-    .setName(
-      'Enter CLIENT_ID'
-    )
-    .setPlaceholder('12345')
-    .setAllowOverride(true);
+  const config = {
+    configParams: [{
+      type: 'SELECT_SINGLE',
+      name: 'fileName',
+      displayName: 'Select a file name',
+      helpText: 'Select a file name',
+      parameterControl: {
+        allowOverride: true
+      },
+      options: configOptions
+      // options: [{
+      //   label: 'Test Label',
+      //   value: 'testValue'
+      // }]
+    }]
+  }
 
-  config
-    .newTextInput()
-    .setId('access_token')
-    .setName(
-      'Enter ACCESS_TOKEN'
-    )
-    .setPlaceholder('12345')
-    .setAllowOverride(true);
+  return config;
+}
 
-  return config.build();
+function getUserEmail() {
+  const properties = PropertiesService.getUserProperties();
+  return properties.getProperty('username');
+}
+
+function getFiles() {
+  var url = [
+    'https://868f-175-100-180-155.in.ngrok.io/',
+    'files?email=',
+    getUserEmail()
+  ].join('');
+  console.log('URL IS', url);
+  var response = UrlFetchApp.fetch(url);
+  return response;
 }
 
 function getFields() {
@@ -37,50 +94,92 @@ function getFields() {
 
   fields
     .newDimension()
-    .setId('created')
-    .setName('Created')
+    .setId('group')
+    .setName('Group')
     .setType(types.TEXT);
 
   fields
     .newDimension()
-    .setId('Enterprise')
-    .setName('Enterprise')
+    .setId('category')
+    .setName('Category')
     .setType(types.TEXT);
 
   fields
     .newDimension()
-    .setId('mode')
-    .setName('Mode')
+    .setId('room')
+    .setName('Room')
     .setType(types.TEXT)
 
   fields
     .newDimension()
-    .setId('start')
-    .setName('Start')
+    .setId('jan-2020')
+    .setName('January 2020')
     .setType(types.TEXT)
 
   fields
     .newDimension()
-    .setId('end')
-    .setName('End')
+    .setId('feb-2020')
+    .setName('February 2020')
     .setType(types.TEXT)
 
   fields
     .newDimension()
-    .setId('group-by')
-    .setName('Group By')
+    .setId('mar-2020')
+    .setName('March 2020')
     .setType(types.TEXT)
 
   fields
     .newDimension()
-    .setId('status')
-    .setName('Status')
+    .setId('apr-2020')
+    .setName('April 2020')
     .setType(types.TEXT)
 
   fields
     .newDimension()
-    .setId('values')
-    .setName('Values')
+    .setId('jun-2020')
+    .setName('June 2020')
+    .setType(types.TEXT)
+    
+    fields
+    .newDimension()
+    .setId('jul-2020')
+    .setName('July 2020')
+    .setType(types.TEXT)
+
+  fields
+    .newDimension()
+    .setId('aug-2020')
+    .setName('August 2020')
+    .setType(types.TEXT)
+
+  fields
+    .newDimension()
+    .setId('sep-2020')
+    .setName('September 2020')
+    .setType(types.TEXT)
+
+  fields
+    .newDimension()
+    .setId('oct-2020')
+    .setName('October 2020')
+    .setType(types.TEXT)
+    
+    fields
+    .newDimension()
+    .setId('nov-2020')
+    .setName('November 2020')
+    .setType(types.TEXT)
+
+  fields
+    .newDimension()
+    .setId('dec-2020')
+    .setName('December 2020')
+    .setType(types.TEXT)
+
+  fields
+    .newDimension()
+    .setId('total')
+    .setName('Total')
     .setType(types.TEXT)
 
   return fields;
@@ -92,6 +191,7 @@ function getSchema(request) {
 
 function getData(request) {
   request.configParams = validateConfig(request.configParams);
+  console.log('CONFIG PARAMS', request.configParams);
 
   var requestedFields = getFields().forIds(
     request.fields.map(function(field) {
@@ -118,19 +218,19 @@ function getData(request) {
 }
 
 function validateConfig(configParams) {
-  configParams = configParams || {};
-  configParams.client_id = configParams.client_id || '12345';
-  configParams.access_token = configParams.access_token || '12345';
+  // configParams = configParams || {};
+  // configParams.client_id = configParams.client_id || '12345';
+  // configParams.access_token = configParams.access_token || '12345';
   return configParams;
 }
 
 function fetchDataFromApi(request) {
   var url = [
-    'https://7e47-2405-204-285-8dbf-8813-45f6-abb6-a17b.in.ngrok.io/',
-    request.configParams.client_id,
-    '?access_token=',
-    request.configParams.access_token
+    'https://868f-175-100-180-155.in.ngrok.io',
+    '/file?name=',
+    request.configParams.fileName
   ].join('');
+  console.log('URL INSIDE GOOGLE SCRIPT', url);
   var response = UrlFetchApp.fetch(url);
   return response;
 }

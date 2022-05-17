@@ -11,8 +11,8 @@
     "addonUrl": "https://github.com/googledatastudio/community-connectors/tree/master/npm-downloads#readme",
     "supportUrl": "https://github.com/googledatastudio/community-connectors/issues",
     "description": "Get npm package download counts.",
-    "sources": [
-      "github"
+    "authType": [
+      "USER_PASS"
     ]
   }
 }
