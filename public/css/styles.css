@@ -1,6 +1,4 @@
 body {
-  background: rgb(159,165,170);
-  background: linear-gradient(135deg, rgba(159,165,170,1) 0%, rgba(163,184,195,1) 50%, rgba(226,235,240,1) 100%);
   display:flex;
   align-items: center;
   justify-content: center;
