@@ -1,48 +1,4 @@
-var cc = DataStudioApp.createCommunityConnector();
-
-// function getConfig() {
-//   var config = cc.getConfig();
-
-//   const userFiles = JSON.parse(getFiles());
-
-//   config
-//     .newInfo()
-//     .setId('instructions')
-//     .setText(
-//       'Enter npm package names to fetch their download count. An invalid or blank entry will revert to the default value.'
-//     );
-
-//   config
-//     .newTextInput()
-//     .setId('client_id')
-//     .setName(
-//       'Enter CLIENT_ID'
-//     )
-//     .setPlaceholder('12345')
-//     .setAllowOverride(true);
-
-//   config
-//     .newTextInput()
-//     .setId('access_token')
-//     .setName(
-//       'Enter ACCESS_TOKEN'
-//     )
-//     .setPlaceholder('12345')
-//     .setAllowOverride(true);
-
-//   const data = config
-//     .newSelectSingle()
-//     .setId('fileName')
-//     .setName(
-//       'Select a File to view'
-//     )
-//     .setHelpText('Select a file name')
-//     .setAllowOverride(true);
-
-//   userFiles.reduce((data, file) => data.addOption(config.newOptionBuilder().setLabel(file).setValue(file)), data);
-
-//   return config.build();
-// }
+var cc = DataStudioApp.createCommunityConnectorTEXT
 
 function getConfig() {
   const userFiles = JSON.parse(getFiles()); 
@@ -79,11 +35,10 @@ function getUserEmail() {
 
 function getFiles() {
   var url = [
-    'https://868f-175-100-180-155.in.ngrok.io/',
+    'https://19fc-175-100-180-155.in.ngrok.io/',
     'files?email=',
     getUserEmail()
   ].join('');
-  console.log('URL IS', url);
   var response = UrlFetchApp.fetch(url);
   return response;
 }
@@ -180,7 +135,7 @@ function getFields() {
     .newDimension()
     .setId('total')
     .setName('Total')
-    .setType(types.TEXT)
+    .setType(types.NUMBER)
 
   return fields;
 }
@@ -191,7 +146,6 @@ function getSchema(request) {
 
 function getData(request) {
   request.configParams = validateConfig(request.configParams);
-  console.log('CONFIG PARAMS', request.configParams);
 
   var requestedFields = getFields().forIds(
     request.fields.map(function(field) {
@@ -226,11 +180,10 @@ function validateConfig(configParams) {
 
 function fetchDataFromApi(request) {
   var url = [
-    'https://868f-175-100-180-155.in.ngrok.io',
+    'https://19fc-175-100-180-155.in.ngrok.io',
     '/file?name=',
     request.configParams.fileName
   ].join('');
-  console.log('URL INSIDE GOOGLE SCRIPT', url);
   var response = UrlFetchApp.fetch(url);
   return response;
 }

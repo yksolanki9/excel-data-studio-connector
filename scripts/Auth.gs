@@ -13,7 +13,6 @@ function setCredentials(request) {
       errorCode: "INVALID_CREDENTIALS"
     };
   } else {
-    console.log('USER DETAILS', request.userPass.username, request.userPass.password)
     storeUserData(request.userPass.username, request.userPass.password);
     return {
       errorCode: "NONE"
@@ -41,7 +40,7 @@ function loadUserData() {
 };
 
 function validateCredentials(username, password) {
-  var rawResponse = UrlFetchApp.fetch('https://868f-175-100-180-155.in.ngrok.io/auth', {
+  var rawResponse = UrlFetchApp.fetch('https://19fc-175-100-180-155.in.ngrok.io/auth', {
       method: 'GET',
       headers: {
         'Authorization': 'Basic ' + Utilities.base64Encode(username + ':' + password)
