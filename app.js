@@ -1,15 +1,49 @@
 const express = require('express');
 const XLSX = require('xlsx');
+const bcrypt = require('bcrypt');
 require('./config/mongoose');
 
 const User = require('./models/User.model');
 const File = require('./models/File.model')
 
 const app = express();
+app.set('view engine', 'ejs');
+app.use(express.static(__dirname + '/public'));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
-  res.send('Welcome');
+  res.render('index', {data:'Google Data Studio Custom Connector'});
 });
+
+app.get('/register', (req, res) => {
+  res.render('register');
+});
+
+app.post('/register', async (req, res) => {
+  try {
+    const {name, email, password} = req.body;
+    let user = await User.findOne({email});
+    if (user) {
+      return res.status(401).render('index', {data:'User with email already exists'});
+    }
+    user = new User({
+      name,
+      email,
+      password
+    });
+
+    const hashedPwd = await bcrypt.hash(user.password, 10);
+    user.password = hashedPwd;
+  
+    await user.save();
+    return res.status(200).render('index', {data:'User registered successfully'});
+  } catch(err) {
+    console.log(err);
+    res.status(500).send('Unable to process request');
+  }
+})
 
 // app.get('/add/user', async(req, res) => {
 //   try {
@@ -29,12 +63,12 @@ app.get('/', (req, res) => {
 // app.get('/add/file', async(req, res) => {
 //   try {
 //     // const email = req.query.email;
-//     const user = await User.findOne({email: 'admin@gmail.com'});
+//     const user = await User.findOne({email: 'test6@gmail.com'});
 
 //     const file = new File({
 //       email: user.email,
 //       userId: user._id,
-//       file: ''
+//       file: 'file6.xlsx'
 //     });
 
 //     await file.save();
@@ -55,7 +89,7 @@ app.get('/auth', async (req, res) => {
     const [email, password] = userData.split(':');
 
     const user = await User.findOne({email});
-    if(!user || user.password !== password) {
+    if(!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).send('Invalid credentials');
     }
     res.status(200).send('User logged in');
