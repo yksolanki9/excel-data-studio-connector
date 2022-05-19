@@ -1,11 +1,12 @@
-var cc = DataStudioApp.createCommunityConnectorTEXT
+var cc = DataStudioApp.createCommunityConnector();
 
 function getConfig() {
+  try {
   const userFiles = JSON.parse(getFiles()); 
 
   const configOptions = userFiles.map((file) => ({
-    label: file,
-    value: file
+    label: file.displayName,
+    value: file.fileName
   }));
 
   const config = {
@@ -18,14 +19,14 @@ function getConfig() {
         allowOverride: true
       },
       options: configOptions
-      // options: [{
-      //   label: 'Test Label',
-      //   value: 'testValue'
-      // }]
     }]
   }
 
   return config;
+  } catch(err) {
+    console.log('ERROR', err);
+    resetAuth();
+  }
 }
 
 function getUserEmail() {
@@ -34,13 +35,18 @@ function getUserEmail() {
 }
 
 function getFiles() {
+  try {
   var url = [
-    'https://19fc-175-100-180-155.in.ngrok.io/',
+    'https://7181-175-100-180-155.in.ngrok.io/',
     'files?email=',
     getUserEmail()
   ].join('');
   var response = UrlFetchApp.fetch(url);
   return response;
+  } catch(err) {
+    console.log('ERROR', err);
+    resetAuth();
+  }
 }
 
 function getFields() {
@@ -179,13 +185,17 @@ function validateConfig(configParams) {
 }
 
 function fetchDataFromApi(request) {
-  var url = [
-    'https://19fc-175-100-180-155.in.ngrok.io',
-    '/file?name=',
-    request.configParams.fileName
-  ].join('');
-  var response = UrlFetchApp.fetch(url);
-  return response;
+  try {
+    var url = [
+      'https://7181-175-100-180-155.in.ngrok.io',
+      '/file?name=',
+      request.configParams.fileName
+    ].join('');
+    var response = UrlFetchApp.fetch(url);
+    return response;
+  } catch(err) {
+    console.log('ERROR', err);
+  }
 }
 
 function getFormattedData(response, requestedFields) {

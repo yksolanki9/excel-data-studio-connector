@@ -40,16 +40,20 @@ function loadUserData() {
 };
 
 function validateCredentials(username, password) {
-  var rawResponse = UrlFetchApp.fetch('https://19fc-175-100-180-155.in.ngrok.io/auth', {
-      method: 'GET',
-      headers: {
-        'Authorization': 'Basic ' + Utilities.base64Encode(username + ':' + password)
-      },
-      muteHttpExceptions: true
-    });
+  try {
+    var rawResponse = UrlFetchApp.fetch('https://7181-175-100-180-155.in.ngrok.io/auth', {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Basic ' + Utilities.base64Encode(username + ':' + password)
+        },
+        muteHttpExceptions: true
+      });
 
-    return rawResponse.getResponseCode() === 200;
+      return rawResponse.getResponseCode() === 200;
+  } catch(err) {
+      console.log('ERROR', err);
   }
+}
 
   function storeUserData(username, password) {
     PropertiesService
