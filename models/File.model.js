@@ -6,7 +6,10 @@ const fileSchema = mongoose.Schema({
     type: mongoose.Types.ObjectId,
     ref: 'User'
   },
-  files: [String]
+  files: [{
+    fileName: String,
+    displayName: String
+  }]
 });
 
 const File = mongoose.model('File', fileSchema);

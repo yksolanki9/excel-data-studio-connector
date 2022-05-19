@@ -1,0 +1,16 @@
+<%- include('../partials/header') %>
+<body class="h-100">
+  <div class="form-container">
+    <h3>Upload a file</h3>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+      <div class="form-group row form-field">
+          <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+      </div>
+      <div class="custom-file form-group row form-field">
+        <input type="file" class="custom-file-input form-control" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" id="file" name="file" required>
+      </div>      
+      <button type="submit" class="btn btn-outline-dark btn-lg form-field">Upload</button>
+    </form>
+  </div>
+</body>
+<%- include('../partials/footer') %>
