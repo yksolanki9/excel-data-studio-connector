@@ -2,6 +2,10 @@ const express = require('express');
 const XLSX = require('xlsx');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
+const passport = require('passport');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+let LocalStrategy = require('passport-local').Strategy;
 require('./config/mongoose');
 
 const User = require('./models/User.model');
@@ -16,6 +20,55 @@ app.use(express.static(__dirname + '/public'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+app.use(session({
+	secret: process.env.SESSION_SECRET,
+	resave: false,
+	saveUninitialized: true,
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new LocalStrategy({
+  usernameField: 'email',
+  passwordField: 'password',
+  passReqToCallback: true
+},async (req, email, password, done) => {
+  try {
+    const user = await User.findOne({email});
+    if (!user) {
+      req.body.error = 'User does not exist';
+      return done(null, false, { error: 'User does not exist' });
+    }
+    const isValidPwd  = await bcrypt.compare(password, user.password);
+    if(!isValidPwd) {
+      req.error = 'Incorrect Password';
+      return done(null, false, { error: 'Incorrect Password' });
+    }
+    return done(null, user);
+  } catch(err) {
+    return done(err);
+  }
+}));
+
+passport.serializeUser((user, done) => {
+  done(null, user._id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch(err) {
+    done(err);
+  }
+});
+
+function isLoggedIn(req, res, next){
+  return req.isAuthenticated() ? next() : res.redirect('/login');
+}
 
 app.get('/', (req, res) => {
   res.render('pages/index', {data:'Google Data Studio Custom Connector'});
@@ -53,25 +106,29 @@ app.post('/register', async (req, res) => {
 
     return res.status(200).render('pages/index', {data:'User registered successfully'});
   } catch(err) {
-    console.log(err);
     res.status(500).send('Unable to process request');
   }
 })
 
-app.get('/upload', (req, res) => {
+app.get('/login', (req, res) => {
+  res.render('pages/login', {error: req.error});
+});
+
+app.post('/login', passport.authenticate('local', {
+	failureRedirect: '/login',
+  failureMessage: true 
+	}), (req, res) => {
+    res.redirect('/upload');
+})
+
+app.get('/upload', isLoggedIn, (req, res) => {
   res.render('pages/upload');
 })
 
-app.post('/upload', upload.single('file'), async (req, res) => {
+app.post('/upload', isLoggedIn, upload.single('file'), async (req, res) => {
   try {
-    const email = req.body.email;
     const fileData = req.file;
-
-    const user = await User.findOne({email});
-    if(!user) {
-      return res.status(400).json({message: 'Email is not registered'});
-    }
-    await File.findOneAndUpdate({ userId: user._id }, {
+    await File.findOneAndUpdate({ userId: req.user._id }, {
       $push: {
         'files': {
           displayName: fileData.originalname,
@@ -83,6 +140,16 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     res.status(200).json({message: 'File uploaded successfully'});
   } catch(err) {
     res.status(500).json({message: 'Unable to save file'});
+  }
+})
+
+app.get('/all-files', isLoggedIn, async (req, res) => {
+  try {
+    const userFiles = await File.findOne({email: req.user.email});
+    const files = userFiles.files.map(file => file.displayName);
+    res.render('pages/all-files', {files});
+  } catch(err) {
+    res.status(500).json({err: err.message});
   }
 })
 

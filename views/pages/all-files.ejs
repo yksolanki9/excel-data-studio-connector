@@ -1,0 +1,10 @@
+<%- include('../partials/header') %>
+<body class="h-100">
+  <div class="form-container">
+    <h3>Uploaded files</h3>
+    <% for(let i = 0; i < files.length; i++) {%>
+      <div><%= files[i] %></div>
+    <% } %>
+  </div>
+</body>
+<%- include('../partials/footer') %>
