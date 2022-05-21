@@ -98,7 +98,6 @@ app.post('/register', async (req, res) => {
     if (user) {
       req.flash('error_msg', 'User with email already exists. Please log in or try with different email');
       return res.redirect('/register');
-      // return res.status(401).render('pages/index', {data:'User with email already exists'});
     }
     user = new User({
       _id: mongoose.Types.ObjectId(),
@@ -176,27 +175,24 @@ app.get('/logout', (req, res) => {
   });
 })
 
-app.get('/auth', async (req, res) => {
-  try {
-    const base64Data = req.get('Authorization');
-    if(!base64Data || !base64Data.length) {
-      return res.status(401).send('No credentials provided');
+app.post('/gds/login', (req, res) => {
+  passport.authenticate('local', (err, user, info) => {
+    try {
+      if(err) throw Error();
+      if(!user) {
+        return res.status(401).send('Invalid credentials');
+      }
+      req.logIn(user, (err) => {
+        if (err) throw Error();
+        return res.status(200).send('User logged in');
+      });
+    } catch(err) {
+      return res.status(500).send('Unable to Login');
     }
-    const buffer = Buffer.from(base64Data?.split(' ')[1], 'base64');
-    const userData = buffer.toString('utf8');
-    const [email, password] = userData.split(':');
+  })(req, res);
+});
 
-    const user = await User.findOne({email});
-    if(!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(401).send('Invalid credentials');
-    }
-    res.status(200).send('User logged in');
-  } catch(err) {
-    res.status(500).send('Unable to Login');
-  }
-})
-
-app.get('/files', async (req, res) => {
+app.get('/gds/files', async (req, res) => {
   try {
     const email = req.query.email;
     const userFiles = await File.findOne({email});
@@ -209,7 +205,7 @@ app.get('/files', async (req, res) => {
   }
 })
 
-app.get('/file', (req, res) => {
+app.get('/gds/file', (req, res) => {
   try {
     const fileName = req.query.name;
     const filePath = `${__dirname}/files/${fileName}`;
