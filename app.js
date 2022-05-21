@@ -168,6 +168,12 @@ app.get('/all-files', isLoggedIn, async (req, res) => {
   } catch(err) {
     res.status(500).json({err: err.message});
   }
+});
+
+app.get('/logout', (req, res) => {
+  req.session.destroy(function (err) {
+	  res.redirect('/login');
+  });
 })
 
 app.get('/auth', async (req, res) => {
