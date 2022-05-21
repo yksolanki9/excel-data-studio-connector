@@ -5,6 +5,7 @@ const multer = require('multer');
 const passport = require('passport');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const flash = require('connect-flash');
 let LocalStrategy = require('passport-local').Strategy;
 require('./config/mongoose');
 
@@ -31,6 +32,16 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(flash());
+
+app.use(function(req, res, next){
+	res.locals.success_msg = req.flash('success_msg');
+	res.locals.error_msg = req.flash('error_msg');
+	res.locals.error = req.flash('error');
+	res.locals.user = req.user || null;
+  next();
+});
+
 passport.use(new LocalStrategy({
   usernameField: 'email',
   passwordField: 'password',
@@ -39,13 +50,11 @@ passport.use(new LocalStrategy({
   try {
     const user = await User.findOne({email});
     if (!user) {
-      req.body.error = 'User does not exist';
-      return done(null, false, { error: 'User does not exist' });
+      return done(null, false, req.flash('error_msg', 'Email is not registered.'));
     }
     const isValidPwd  = await bcrypt.compare(password, user.password);
     if(!isValidPwd) {
-      req.error = 'Incorrect Password';
-      return done(null, false, { error: 'Incorrect Password' });
+      return done(null, false, req.flash('error_msg', 'Incorrect Password. Please try again.'));
     }
     return done(null, user);
   } catch(err) {
@@ -67,7 +76,11 @@ passport.deserializeUser(async (id, done) => {
 });
 
 function isLoggedIn(req, res, next){
-  return req.isAuthenticated() ? next() : res.redirect('/login');
+  if (!req.isAuthenticated()) {
+    req.flash('error_msg', 'You are not logged in. Please log in to continue');
+    return res.redirect('/login');
+  }
+  return next();
 }
 
 app.get('/', (req, res) => {
@@ -83,7 +96,9 @@ app.post('/register', async (req, res) => {
     const {name, email, password} = req.body;
     let user = await User.findOne({email});
     if (user) {
-      return res.status(401).render('pages/index', {data:'User with email already exists'});
+      req.flash('error_msg', 'User with email already exists. Please log in or try with different email');
+      return res.redirect('/register');
+      // return res.status(401).render('pages/index', {data:'User with email already exists'});
     }
     user = new User({
       _id: mongoose.Types.ObjectId(),
@@ -103,26 +118,27 @@ app.post('/register', async (req, res) => {
       file: []
     });
     await userFiles.save();
-
-    return res.status(200).render('pages/index', {data:'User registered successfully'});
+    req.flash('success_msg', 'You have registered successfully. Please log in');
+    res.redirect('/login');
   } catch(err) {
-    res.status(500).send('Unable to process request');
+    req.flash('error_msg', 'Unable to register. Please try again');
+    res.redirect('/register');
   }
 })
 
 app.get('/login', (req, res) => {
-  res.render('pages/login', {error: req.error});
+  res.render('pages/login');
 });
 
 app.post('/login', passport.authenticate('local', {
 	failureRedirect: '/login',
-  failureMessage: true 
+  failureFlash: true 
 	}), (req, res) => {
     res.redirect('/upload');
 })
 
 app.get('/upload', isLoggedIn, (req, res) => {
-  res.render('pages/upload', { status: null});
+  res.render('pages/upload');
 })
 
 app.post('/upload', isLoggedIn, upload.single('file'), async (req, res) => {
@@ -136,9 +152,11 @@ app.post('/upload', isLoggedIn, upload.single('file'), async (req, res) => {
         }
       }
     });
-    res.render('pages/upload', {status: 'success'});
+    req.flash('success_msg', 'File uploaded successfully!');
   } catch(err) {
-    res.render('pages/upload', {status: 'failure'});
+    req.flash('error_msg', 'Unable to upload file. Please try again');
+  } finally {
+    res.redirect('/upload');
   }
 })
 

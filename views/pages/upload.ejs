@@ -1,15 +1,5 @@
 <%- include('../partials/header') %>
-<body class="h-100">
-  <% if(status === 'success') { %>
-    <div class="alert alert-success alert-msg" role="alert">
-      File uploaded successfully!
-    </div>
-  <% } else if(status === 'failure') {  %>
-    <div class="alert alert-danger alert-msg" role="alert">
-      Unable to upload file. Please try again
-    </div>
-  <% } %>
-  
+<body class="h-100"> 
   <div class="form-container">
     <h3>Upload a file</h3>
     <form action="/upload" method="post" enctype="multipart/form-data">
