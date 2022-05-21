@@ -71,7 +71,7 @@ function isLoggedIn(req, res, next){
 }
 
 app.get('/', (req, res) => {
-  res.render('pages/index', {data:'Google Data Studio Custom Connector'});
+  res.redirect('/upload');
 });
 
 app.get('/register', (req, res) => {
@@ -122,7 +122,7 @@ app.post('/login', passport.authenticate('local', {
 })
 
 app.get('/upload', isLoggedIn, (req, res) => {
-  res.render('pages/upload');
+  res.render('pages/upload', { status: null});
 })
 
 app.post('/upload', isLoggedIn, upload.single('file'), async (req, res) => {
@@ -136,10 +136,9 @@ app.post('/upload', isLoggedIn, upload.single('file'), async (req, res) => {
         }
       }
     });
-
-    res.status(200).json({message: 'File uploaded successfully'});
+    res.render('pages/upload', {status: 'success'});
   } catch(err) {
-    res.status(500).json({message: 'Unable to save file'});
+    res.render('pages/upload', {status: 'failure'});
   }
 })
 
