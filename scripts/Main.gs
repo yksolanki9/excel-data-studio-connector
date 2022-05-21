@@ -37,8 +37,8 @@ function getUserEmail() {
 function getFiles() {
   try {
   var url = [
-    'https://7181-175-100-180-155.in.ngrok.io/',
-    'files?email=',
+    ROOT_URI,
+    '/gds/files?email=',
     getUserEmail()
   ].join('');
   var response = UrlFetchApp.fetch(url);
@@ -187,8 +187,8 @@ function validateConfig(configParams) {
 function fetchDataFromApi(request) {
   try {
     var url = [
-      'https://7181-175-100-180-155.in.ngrok.io',
-      '/file?name=',
+      ROOT_URI,
+      '/gds/file?name=',
       request.configParams.fileName
     ].join('');
     var response = UrlFetchApp.fetch(url);

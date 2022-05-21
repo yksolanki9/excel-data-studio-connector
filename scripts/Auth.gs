@@ -1,3 +1,5 @@
+const ROOT_URI = 'https://47fd-175-100-180-155.in.ngrok.io';
+
 function getAuthType() {
   var cc = DataStudioApp.createCommunityConnector();
   return cc
@@ -41,10 +43,11 @@ function loadUserData() {
 
 function validateCredentials(username, password) {
   try {
-    var rawResponse = UrlFetchApp.fetch('https://7181-175-100-180-155.in.ngrok.io/auth', {
-        method: 'GET',
-        headers: {
-          'Authorization': 'Basic ' + Utilities.base64Encode(username + ':' + password)
+    var rawResponse = UrlFetchApp.fetch(`${ROOT_URI}/gds/login`, {
+        method: 'POST',
+        payload: {
+          email: username,
+          password: password
         },
         muteHttpExceptions: true
       });
