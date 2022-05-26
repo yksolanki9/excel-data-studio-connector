@@ -6,12 +6,16 @@ const passport = require('passport');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
-let LocalStrategy = require('passport-local').Strategy;
+const LocalStrategy = require('passport-local').Strategy;
+const mongoose = require('mongoose');
 require('./config/mongoose');
+
+//CREDS -> yashsolanki1709@gmail.com - yash
 
 const User = require('./models/User.model');
 const File = require('./models/File.model');
-const { default: mongoose } = require('mongoose');
+const { getGoogleAuthURL, getGoogleUser } = require('./config/google-auth.js');
+
 
 const app = express();
 const upload = multer({ dest: './files' });
@@ -216,5 +220,53 @@ app.get('/gds/file', (req, res) => {
     res.status(500).json({err: err.message});
   }
 });
+
+app.get('/login/google', async (req, res) => {
+  try {
+    const user = await User.findOne({email: req.user.email});
+    if(!user?.refresh_token) {
+      return res.render('pages/login-google');
+    }
+    return res.redirect('/file/gmail');
+  } catch(err) {
+    req.flash('error_msg', `We're facing some issues. Please try again`);
+    res.redirect('/login');
+  }
+})
+
+app.get('/auth/google', (req, res) => {
+  res.redirect(getGoogleAuthURL());
+});
+
+app.get('/auth/google/callback', async (req, res) => {
+  try {
+    const googleUser = await getGoogleUser(req.query);
+  
+    const { id, email, name } = googleUser.data;
+
+    if (email !== req.user.email) {
+      req.flash('error_msg', `Please use the same email you're logged in with`);
+      return res.redirect('/login/google');
+    }
+
+    await User.findOneAndUpdate({email}, {
+      googleId: id,
+      refresh_token: googleUser.refresh_token
+    });
+
+    res.redirect('/file/gmail');
+  } catch(err) {
+    res.status(500).json({ error: err.message });
+  }
+})
+
+app.get('/file/gmail', (req, res) => {
+  try {
+    return res.send(req.user);
+  } catch(err) {
+    req.flash('error_msg', `We're facing some issues. Please try again`);
+    res.redirect('/login');
+  }
+})
 
 app.listen(3000, () => console.log('Server running on port 3000'));

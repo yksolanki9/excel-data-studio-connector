@@ -2,13 +2,12 @@ body {
   display:flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
 }
 
 .form-container {
   border: 1px solid grey;
   border-radius: 16px;
-  margin-bottom: 250px;
+  margin-top: 150px;
   padding: 40px;
   text-align: center;
   width: 500px;
@@ -22,10 +21,20 @@ body {
 .alert-msg {
   text-align: center;
   width: 600px;
+  position: absolute;
+  top: 175px;
 }
 
 .menu-bar {
   width: 700px;
   margin-top: 50px;
   padding: 8px 16px;
+}
+
+.google-cta {
+  margin-top: 40px;
+}
+
+.bi-google {
+  margin-bottom: 4px;
 }
