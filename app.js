@@ -84,7 +84,7 @@ function isLoggedIn(req, res, next){
 }
 
 app.get('/', (req, res) => {
-  res.redirect('/upload');
+  res.redirect('/login');
 });
 
 app.get('/register', (req, res) => {
