@@ -13,6 +13,10 @@ body {
   width: 500px;
 }
 
+.form-container-2 {
+  text-align: center;
+}
+
 .form-field {
   margin-top: 20px;
   margin-left: 0;
@@ -37,4 +41,43 @@ body {
 
 .bi-google {
   margin-bottom: 4px;
+}
+
+.heading-2 {
+  margin-top: 60px;
+}
+
+.form{
+  position: relative;
+  width: 500px;
+  margin: 20px auto 60px;
+}
+
+.btn-search {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 10px 16px;
+  border-radius: 0 10px 10px 0;
+}
+
+.btn-search:hover {
+  box-shadow: 1px 2px 2px #9ca3af;
+}
+
+.form-input {
+  height: 46px;
+  text-indent: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+}
+
+.form-input:focus{
+  box-shadow: 1px 2px 6px #9ca3af;
+  border: 1px solid #d1d5db;
+}
+
+.list-container {
+  width: 800px;
+  margin: 60px auto;
 }

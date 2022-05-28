@@ -1,21 +1,21 @@
-const { google } = require('google');
-const { User } = require('../models/User.model.js');
-const { getOAuth2Client } = require('../config/google-auth.js');
+const { google } = require('googleapis');
 const { v4: uuidv4 } = require('uuid');
 const { writeFile } = require('node:fs/promises');
 const { Base64 } = require('js-base64');
-const { Message } = require('../models/Message.model.js');
-const mongoose = require('mongoose');
+
+const User = require('../models/User.model');
+const File = require('../models/File.model');
+const { getOAuth2Client } = require('../config/google-auth.js');
 
 const gmail = google.gmail('v1');
 
-export async function getAttachments(userId, searchQuery) {
+async function getAttachments(userId, searchQuery) {
   try {
     const FILE_FORMAT = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-  
     const user = await User.findById(userId);
+    const userFiles = await File.findOne({userId});
     google.options({auth: getOAuth2Client(user.refresh_token)});
-  
+
     const messagesList = await gmail.users.messages.list({
       userId: user.email,
       q: `in:inbox has:attachment xlsx ${searchQuery}`
@@ -47,32 +47,25 @@ export async function getAttachments(userId, searchQuery) {
         userId: user.email
       });
 
-      const savedMessage = await Message.findOne({
-        messageId: message.id
-      });
+      //Check if file is present in userFiles
+      const savedFile = userFiles.files.find(file => file.messageId === message.id);
 
       //If an attachment is already saved in nodejs, dont save it again
-      if(!savedMessage) {
+      if(!savedFile) {
         const decodedData = Base64.toUint8Array(attachment.data.data);
-        const storedFileName = uuidv4() + '.xlsx';
-        await writeFile(`attachments/${storedFileName}`, decodedData);
-    
-        const messageData = new Message({
-          _id: mongoose.Types.ObjectId(),
-          userId: user.email,
-          messageId: message.id,
-          attachmentId: attachmentDetails.attachmentId,
-          fileName: storedFileName,
-          originalFileName: attachmentDetails.fileName
-        });
-  
-        await messageData.save();
-  
-        await User.findByIdAndUpdate(userId, {
-          '$push': {
-            'messages': messageData._id
+        const storedFileName = uuidv4();
+        await writeFile(`files/${storedFileName}`, decodedData);
+
+        await File.findOneAndUpdate({ userId }, {
+          $push: {
+            'files': {
+              displayName: attachmentDetails.fileName,
+              fileName: storedFileName,
+              messageId: message.id,
+              source: 'Gmail'
+            }
           }
-        })
+        });
       }
   
       return {
@@ -85,3 +78,5 @@ export async function getAttachments(userId, searchQuery) {
     throw Error(err);
   }
 }
+
+module.exports = { getAttachments };

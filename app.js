@@ -15,6 +15,7 @@ require('./config/mongoose');
 const User = require('./models/User.model');
 const File = require('./models/File.model');
 const { getGoogleAuthURL, getGoogleUser } = require('./config/google-auth.js');
+const { getAttachments } = require('./utils/get-attachments');
 
 
 const app = express();
@@ -118,7 +119,7 @@ app.post('/register', async (req, res) => {
     const userFiles = new File({
       email: user.email,
       userId: user._id,
-      file: []
+      files: []
     });
     await userFiles.save();
     req.flash('success_msg', 'You have registered successfully. Please log in');
@@ -151,7 +152,8 @@ app.post('/upload', isLoggedIn, upload.single('file'), async (req, res) => {
       $push: {
         'files': {
           displayName: fileData.originalname,
-          fileName: fileData.filename
+          fileName: fileData.filename,
+          source: 'Upload'
         }
       }
     });
@@ -221,7 +223,7 @@ app.get('/gds/file', (req, res) => {
   }
 });
 
-app.get('/login/google', async (req, res) => {
+app.get('/login/google', isLoggedIn, async (req, res) => {
   try {
     const user = await User.findOne({email: req.user.email});
     if(!user?.refresh_token) {
@@ -234,7 +236,7 @@ app.get('/login/google', async (req, res) => {
   }
 })
 
-app.get('/auth/google', (req, res) => {
+app.get('/auth/google',isLoggedIn, (req, res) => {
   res.redirect(getGoogleAuthURL());
 });
 
@@ -260,9 +262,34 @@ app.get('/auth/google/callback', async (req, res) => {
   }
 })
 
-app.get('/file/gmail', (req, res) => {
+app.get('/file/gmail',isLoggedIn, (req, res) => {
   try {
-    return res.send(req.user);
+    return res.render('pages/file-gmail');
+  } catch(err) {
+    req.flash('error_msg', `We're facing some issues. Please try again`);
+    res.redirect('/login');
+  }
+});
+
+app.post('/file/gmail', isLoggedIn, async (req, res) => {
+  try {
+    const searchQuery = req.body.searchQuery;
+    const attachments = await getAttachments(req.user._id, searchQuery);
+
+    if(!attachments) {
+      return res.render('pages/file-gmail', { data: {
+          errorMsg: 'No Results found',
+          searchQuery
+        }
+      })
+    }
+
+    const attachmentNames = attachments.map((data) => data.originalFileName);
+
+    return res.render('pages/file-gmail', { data: {
+      attachmentNames,
+      searchQuery
+    }});
   } catch(err) {
     req.flash('error_msg', `We're facing some issues. Please try again`);
     res.redirect('/login');

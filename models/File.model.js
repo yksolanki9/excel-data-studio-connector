@@ -19,8 +19,8 @@ const fileSchema = mongoose.Schema({
       type: String,
       required: true
     },
-    fileSource: {
-      // fileSource will be either 'Gmail' or 'User Upload'
+    source: {
+      // fileSource will be either 'Gmail' or 'Upload'
       type: String,
       required: true
     },
