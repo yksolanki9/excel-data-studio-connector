@@ -62,7 +62,7 @@ async function getAttachments(userId, searchQuery) {
               displayName: attachmentDetails.fileName,
               fileName: storedFileName,
               messageId: message.id,
-              source: 'Gmail'
+              source: 'GMAIL'
             }
           }
         });

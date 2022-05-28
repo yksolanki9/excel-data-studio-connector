@@ -153,7 +153,7 @@ app.post('/upload', isLoggedIn, upload.single('file'), async (req, res) => {
         'files': {
           displayName: fileData.originalname,
           fileName: fileData.filename,
-          source: 'Upload'
+          source: 'UPLOAD'
         }
       }
     });
