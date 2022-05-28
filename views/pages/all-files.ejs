@@ -1,17 +1,22 @@
 <%- include('../partials/header') %>
-<div class="list-container">
-  <h5 class="text-muted text-center heading-3">List of Attachments</h5>
-  <ul class="list-group list-group-light">
-    <!-- Loop over this element to show all attachments -->
-    <% files?.forEach((file) => { %>
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <div>
-          <div class="fw-bold"><%= file.displayName %></div>
-          <div class="text-muted"><%= file.source === 'GMAIL' ? 'Pulled From Gmail' : 'Uploaded By User' %></div>
-        </div>
-      </li>
-    <% }) %>
-  </ul>
-</div>
-
+<% if (files.length === 0) { %>
+  <div class="alert alert-danger alert-msg" role="alert">
+    No record found.
+  </div>
+<% } else { %>
+  <div class="list-container">
+    <h5 class="text-muted text-center heading-3">List of Attachments</h5>
+    <ul class="list-group list-group-light">
+      <!-- Loop over this element to show all attachments -->
+      <% files?.forEach((file) => { %>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <div class="fw-bold"><%= file.displayName %></div>
+            <div class="text-muted"><%= file.source === 'GMAIL' ? 'Pulled From Gmail' : 'Uploaded By User' %></div>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+<% } %>
 <%- include('../partials/footer') %>
