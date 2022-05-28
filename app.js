@@ -168,8 +168,7 @@ app.post('/upload', isLoggedIn, upload.single('file'), async (req, res) => {
 app.get('/all-files', isLoggedIn, async (req, res) => {
   try {
     const userFiles = await File.findOne({email: req.user.email});
-    const files = userFiles.files.map(file => file.displayName);
-    res.render('pages/all-files', {files});
+    res.render('pages/all-files', { files: userFiles.files });
   } catch(err) {
     res.status(500).json({err: err.message});
   }

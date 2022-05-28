@@ -20,9 +20,9 @@ const fileSchema = mongoose.Schema({
       required: true
     },
     source: {
-      // fileSource will be either 'Gmail' or 'Upload'
       type: String,
-      required: true
+      enum: ['UPLOAD', 'GMAIL'],
+      default: 'UPLOAD'
     },
     messageId: {
       type: String

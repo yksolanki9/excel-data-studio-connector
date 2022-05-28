@@ -1,10 +1,17 @@
 <%- include('../partials/header') %>
-<body class="h-100">
-  <div class="form-container">
-    <h3>Uploaded files</h3>
-    <% for(let i = 0; i < files.length; i++) {%>
-      <div><%= files[i] %></div>
-    <% } %>
-  </div>
-</body>
+<div class="list-container">
+  <h5 class="text-muted text-center heading-3">List of Attachments</h5>
+  <ul class="list-group list-group-light">
+    <!-- Loop over this element to show all attachments -->
+    <% files?.forEach((file) => { %>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <div class="fw-bold"><%= file.displayName %></div>
+          <div class="text-muted"><%= file.source === 'GMAIL' ? 'Pulled From Gmail' : 'Uploaded By User' %></div>
+        </div>
+      </li>
+    <% }) %>
+  </ul>
+</div>
+
 <%- include('../partials/footer') %>
