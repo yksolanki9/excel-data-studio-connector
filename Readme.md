@@ -8,6 +8,21 @@ Google Data Studio is an online tool for converting raw data into customizable i
 - Create a cluster in mongodb and copy paste the url inside the `.env` file
 - Also, add a secret key for your session in the same file
 
+### Setting up project in Google Cloud
+- Go to [Google Cloud Console](https://console.cloud.google.com) and create a new project
+- Enabling Google API
+    - In sidemenu options, select `APIs and Services` -> `Library` -> Search for `Gmail API` and enable it
+- Setting up the OAuth Screen
+    - Inside `APIs and Services` -> `OAuth Consent Screen` -> Select `User Type` (Select `External` for testing) and click on `Create`
+    - Now enter all the application details and click `Save and Continue`
+    - Inside `Scopes` section -> `Add Scopes` -> Seach for `Gmail API` and select the `/auth/gmail.readonly` scope. This gives our app access to read the user's emails -> `Save and Continue`
+    - If your application is still in `Testing` phase and you selected `External` user type in Step 1, you'll have to provide email ids of all the users who can access your app -> `Save and Continue`
+    - Check the app summary and click `Save`
+- Generating Credentials
+    - Again in `APIs and Services`, select `Credentials` -> `Create Credentials` -> `oAuth Client ID`
+    - Select `Application Type` (Web Application), add authorized origin (Use `http://localhost:3000` if you don't have a Domain) and a callback URL where Google will send the response after OAuth (`http://localhost:3000/auth/google/callback` in our case). Also add this as `CALLBACK_URL` in the `.env` file
+    - Save you client id and secret as `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in the `.env` file
+
 ### Running the Node App
 - Go to `http://localhost:3000/register` and create an account and/or login to your account
 - Here, you can upload the excel files you wish to use as data source in the connector.
