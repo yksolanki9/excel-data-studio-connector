@@ -20,11 +20,11 @@ Google Data Studio is an online tool for converting raw data into customizable i
     - Check the app summary and click `Save`
 - Generating Credentials
     - Again in `APIs and Services`, select `Credentials` -> `Create Credentials` -> `oAuth Client ID`
-    - Select `Application Type` (Web Application), add authorized origin (Use `http://localhost:3000` if you don't have a Domain) and a callback URL where Google will send the response after OAuth (`http://localhost:3000/auth/google/callback` in our case). Also add this as `CALLBACK_URL` in the `.env` file
+    - Select `Application Type` (Web Application), add authorized origin (Use `http://localhost:4000` if you don't have a Domain) and a callback URL where Google will send the response after OAuth (`http://localhost:4000/auth/google/callback` in our case). Also add this as `CALLBACK_URL` in the `.env` file
     - Save you client id and secret as `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in the `.env` file
 
 ### Running the Node App
-- Go to `http://localhost:3000/register` and create an account and/or login to your account
+- Go to `http://localhost:4000/register` and create an account and/or login to your account
 - Here, you can upload the excel files you wish to use as data source in the connector.
 - To view all the files uploaded by you, select the `All Files` option from the navbar
 
