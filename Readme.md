@@ -1,4 +1,3 @@
-## About Google Data Studio
 Google Data Studio is an online tool for converting raw data into customizable informative reports and dashboards
 
 ## About the Project
