@@ -1,5 +1,23 @@
-### About Google Data Studio
+## About Google Data Studio
 Google Data Studio is an online tool for converting raw data into customizable informative reports and dashboards
+
+## About the Project
+- A Google Data Studio connector which can be used to connect to any excel file and create reports from it.
+- The connector is built using Google Apps Script and Nodejs.
+- The user can register/login using email and password and upload a file from the computer or can login using Google OAuth and get all the files from his/her Gmail account based on a search query.
+- All the uploaded files will be stored in a MongoDB database and can be used to create reports in Google Data Studio.
+
+## UI Snapshots
+### Nodejs App
+![App Login Page](snapshots/app-login.png)
+![File Upload](snapshots/file-upload.png)
+![Google OAuth](snapshots/google-oauth.png)
+![Search for attachment](snapshots/search-for-attachments.png)
+![List of attachments](snapshots/list-of-attachments.png)
+
+### Google Data Studio Connector
+![GDS login](snapshots/gds-login.png)
+![GDS select file](snapshots/gds-select-file.png)
 
 ### Initial Setup
 - Git clone repo
