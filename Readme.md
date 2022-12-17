@@ -27,7 +27,7 @@ Google Data Studio is an online tool for converting raw data into customizable i
 #### List of all the files uploaded by the user
 
 <p float="left">
-  <img alt="List of attachments" src="snapshots/list-of-attachments.png" width="100%">
+  <img alt="List of attachments" src="snapshots/list-of-attachments.png" width="50%">
 </p>
 
 ### Google Data Studio Connector
