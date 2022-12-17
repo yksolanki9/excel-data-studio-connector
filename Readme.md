@@ -9,15 +9,33 @@ Google Data Studio is an online tool for converting raw data into customizable i
 
 ## UI Snapshots
 ### Nodejs App
-![App Login Page](snapshots/app-login.png)
-![File Upload](snapshots/file-upload.png)
-![Google OAuth](snapshots/google-oauth.png)
-![Search for attachment](snapshots/search-for-attachments.png)
-![List of attachments](snapshots/list-of-attachments.png)
+
+#### Login and File Upload
+
+<p float="left">
+  <img alt="App Login Page" src="snapshots/app-login.png" width="49%">
+  <img alt="File Upload" src="snapshots/file-upload.png" width="49%">
+</p>
+
+#### Authenticate with Google OAuth and pull files from Gmail
+
+<p float="left">
+  <img alt="Google OAuth" src="snapshots/google-oauth.png" width="49%">
+  <img alt="Search for attachment" src="snapshots/search-for-attachments.png" width="49%">
+</p>
+
+#### List of all the files uploaded by the user
+
+<p float="left">
+  <img alt="List of attachments" src="snapshots/list-of-attachments.png" width="100%">
+</p>
 
 ### Google Data Studio Connector
-![GDS login](snapshots/gds-login.png)
-![GDS select file](snapshots/gds-select-file.png)
+
+<p float="left">
+  <img alt="GDS login" src="snapshots/gds-login.png" width="49%">
+  <img alt="GDS select file" src="snapshots/gds-select-file.png" width="49%">
+</p>
 
 ### Initial Setup
 - Git clone repo
